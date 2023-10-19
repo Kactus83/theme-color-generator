@@ -3,6 +3,8 @@ import { SaturationValue } from "../models/value-objects/SaturationValue";
 import { HexThemeColors } from "../models/themes/HexThemeColors";
 import { RGBThemeColors } from "../models/themes/RGBThemeColors";
 import { ColorsPaletteService } from "./ColorsPaletteService";
+import { ThemeSettings } from "../models/settings/ThemeSettings";
+import { ColorMode } from "../models/types/ColorsMode";
 
 /**
  * Service responsible for generating theme colors.
@@ -10,6 +12,19 @@ import { ColorsPaletteService } from "./ColorsPaletteService";
 export class ThemeColorsService {
   
   constructor(private colorsPaletteService: ColorsPaletteService) {}
+
+  /**
+   * Generate Theme Colors based on settings
+   * @param {ThemeSettings} settings - Theme settings
+   * @returns {HexThemeColors | RGBThemeColors} - Theme colors (either Hex or RGB)
+   */
+  generateThemeColors(settings: ThemeSettings) {
+    if (settings.colorMode === ColorMode.HEX) {
+      return this.generateHexThemeColors(settings.name, settings.hue, settings.saturation, settings.numberOfShades);
+    } else {
+      return this.generateRGBThemeColors(settings.name, settings.hue, settings.saturation, settings.numberOfShades);
+    }
+  }
   
   /**
    * Generate Hex Theme Colors
@@ -19,7 +34,7 @@ export class ThemeColorsService {
    * @param {number} numberOfShades - Number of shades in each palette
    * @returns {HexThemeColors} - Hex theme colors
    */
-  generateHexThemeColors(name: string, hue: HueValue, saturation: SaturationValue, numberOfShades: number): HexThemeColors {
+  private generateHexThemeColors(name: string, hue: HueValue, saturation: SaturationValue, numberOfShades: number): HexThemeColors {
     const palette = this.colorsPaletteService.generateHexPalette(name, hue, saturation, numberOfShades);
     return new HexThemeColors(name, [palette]);
   }
@@ -32,7 +47,7 @@ export class ThemeColorsService {
    * @param {number} numberOfShades - Number of shades in each palette
    * @returns {RGBThemeColors} - RGB theme colors
    */
-  generateRGBThemeColors(name: string, hue: HueValue, saturation: SaturationValue, numberOfShades: number): RGBThemeColors {
+  private generateRGBThemeColors(name: string, hue: HueValue, saturation: SaturationValue, numberOfShades: number): RGBThemeColors {
     const palette = this.colorsPaletteService.generateRGBPalette(name, hue, saturation, numberOfShades);
     return new RGBThemeColors(name, [palette]);
   }
