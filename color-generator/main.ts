@@ -26,7 +26,11 @@ document.addEventListener("DOMContentLoaded", function() {
             const themeName = themeNameInput.value;
             const numberOfShades = Number(numberOfShadesInput.value);
 
+            console.log(hue, saturation, themeName, numberOfShades);
+
             const theme = themeColorsService.generateHexThemeColors(themeName, hue, saturation, numberOfShades);
+
+            console.log(theme);
 
             themeDisplayService.display(theme);
         });
