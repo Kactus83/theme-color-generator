@@ -1,4 +1,4 @@
-import { Color } from '../types/Colors';
+import { Color } from "../value-objects/colors/Color";
 
 /**
  * Class representing a generic color palette

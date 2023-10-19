@@ -1,5 +1,5 @@
 import { ColorsPalette } from "./ColorsPalette";
-import { RGBColor } from "../value-objects/RGBColor";
+import { RGBColor } from "../value-objects/colors/RGBColor";
 
 /**
  * Class representing a color palette consisting of RGB colors

@@ -1,8 +1,8 @@
 import { HexColorsPalette } from "../models/palettes/HexColorsPalette";
 import { RGBColorsPalette } from "../models/palettes/RGBColorsPalette";
-import { HexColor } from "../models/value-objects/HexColor";
+import { HexColor } from "../models/value-objects/colors/HexColor";
 import { HueValue } from "../models/value-objects/HueValue";
-import { RGBColor } from "../models/value-objects/RGBColor";
+import { RGBColor } from "../models/value-objects/colors/RGBColor";
 import { SaturationValue } from "../models/value-objects/SaturationValue";
 import { ColorsService } from "./ColorsService";
 

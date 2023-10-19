@@ -1,5 +1,5 @@
 import { ColorsPalette } from "./ColorsPalette";
-import { HexColor } from "../value-objects/HexColor";
+import { HexColor } from "../value-objects/colors/HexColor";
 
 /**
  * Class representing a color palette consisting of Hex colors

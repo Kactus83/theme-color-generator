@@ -1,6 +1,6 @@
 import { ColorsPalette } from "../models/palettes/ColorsPalette";
 import { ThemeColors } from "../models/themes/ThemeColors";
-import { Color } from "../models/types/Colors";
+import { Color } from "../models/value-objects/colors/Color";
 
 export class ThemeDisplayService {
   constructor(private outputElement: HTMLElement) {}

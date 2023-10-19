@@ -1,5 +1,5 @@
-import { HexColor } from '../models/value-objects/HexColor';
-import { RGBColor } from '../models/value-objects/RGBColor';
+import { HexColor } from '../models/value-objects/colors/HexColor';
+import { RGBColor } from '../models/value-objects/colors/RGBColor';
 import { HueValue } from '../models/value-objects/HueValue';
 
 /**
