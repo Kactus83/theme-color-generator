@@ -69,11 +69,11 @@ export class ThemeColorsService {
     
     switch (themeColorMode) {
       case ThemeColorMode.BI_COLOR:
-        hues.push(new HueValue((baseHue.getValue() + 20) % 360));
+        hues.push(new HueValue((baseHue.getValue() + 12) % 360));
         break;
       case ThemeColorMode.TRI_COLOR:
-        hues.push(new HueValue((baseHue.getValue() + 20) % 360));
-        hues.push(new HueValue((baseHue.getValue() - 20 + 360) % 360));
+        hues.push(new HueValue((baseHue.getValue() + 12) % 360));
+        hues.push(new HueValue((baseHue.getValue() - 12 + 360) % 360));
         break;
       default:
         break;
