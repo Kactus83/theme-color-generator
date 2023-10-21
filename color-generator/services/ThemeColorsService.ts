@@ -5,7 +5,7 @@ import { RGBThemeColors } from "../models/themes/RGBThemeColors";
 import { ColorsPaletteService } from "./ColorsPaletteService";
 import { ThemeSettings } from "../models/settings/ThemeSettings";
 import { ColorMode } from "../models/types/ColorsMode";
-import { ThemeColorMode } from "../models/types/ThemesColorsModes";
+import { ThemeNumberOfColors } from "../models/types/ThemeNumberOfColors";
 
 /**
  * Service responsible for generating theme colors.
@@ -64,14 +64,14 @@ export class ThemeColorsService {
    * @param {ThemeColorMode} themeColorMode - Mode defining the number of hues to generate
    * @returns {HueValue[]} - Array of HueValue
    */
-  private generateHues(baseHue: HueValue, themeColorMode: ThemeColorMode): HueValue[] {
+  private generateHues(baseHue: HueValue, themeColorMode: ThemeNumberOfColors): HueValue[] {
     const hues: HueValue[] = [baseHue];
     
     switch (themeColorMode) {
-      case ThemeColorMode.BI_COLOR:
+      case ThemeNumberOfColors.BI_COLOR:
         hues.push(new HueValue((baseHue.getValue() + 12) % 360));
         break;
-      case ThemeColorMode.TRI_COLOR:
+      case ThemeNumberOfColors.TRI_COLOR:
         hues.push(new HueValue((baseHue.getValue() + 12) % 360));
         hues.push(new HueValue((baseHue.getValue() - 12 + 360) % 360));
         break;

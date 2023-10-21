@@ -6,7 +6,7 @@ import { ColorsPaletteService } from "./services/ColorsPaletteService";
 import { ColorsService } from "./services/ColorsService";
 import { ThemeDisplayService } from "./services/ThemeDisplayService";
 import { ColorMode } from "./models/types/ColorsMode";
-import { ThemeColorMode } from "./models/types/ThemesColorsModes";
+import { ThemeColorMode } from "./models/types/ThemeNumberOfColors";
 
 document.addEventListener("DOMContentLoaded", function() {
   const hueInput = document.getElementById("hueInput") as HTMLInputElement;
