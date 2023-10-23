@@ -21,9 +21,9 @@ export class ThemeColorsService {
    */
   generateThemeColors(settings: ThemeSettings) {
     if (settings.colorMode === ColorMode.HEX) {
-      return this.generateHexThemeColors(settings.name, settings.hue, settings.saturation, settings.numberOfShades, settings.themeColorMode);
+      return this.generateHexThemeColors(settings.name, settings.hue, settings.saturation, settings.numberOfShades, settings.themeNumberOfColors);
     } else {
-      return this.generateRGBThemeColors(settings.name, settings.hue, settings.saturation, settings.numberOfShades, settings.themeColorMode);
+      return this.generateRGBThemeColors(settings.name, settings.hue, settings.saturation, settings.numberOfShades, settings.themeNumberOfColors);
     }
   }
   
@@ -34,11 +34,11 @@ export class ThemeColorsService {
    * @param {HueValue} hue - Hue value
    * @param {SaturationValue} saturation - Saturation level (0 to 100)
    * @param {number} numberOfShades - Number of shades in each palette
-   * @param {ThemeColorMode} themeColorMode - Mode defining the number of hues
+   * @param {ThemeNumberOfColors} themeNumberOfColors - Mode defining the number of hues
    * @returns {RGBThemeColors} - RGB theme colors
    */
-  private generateHexThemeColors(name: string, hue: HueValue, saturation: SaturationValue, numberOfShades: number, themeColorMode: ThemeColorMode): HexThemeColors {
-    const hues = this.generateHues(hue, themeColorMode);
+  private generateHexThemeColors(name: string, hue: HueValue, saturation: SaturationValue, numberOfShades: number, themeNumberOfColors: ThemeNumberOfColors): HexThemeColors {
+    const hues = this.generateHues(hue, themeNumberOfColors);
     const palettes = hues.map(h => this.colorsPaletteService.generateHexPalette(name, h, saturation, numberOfShades));
     return new HexThemeColors(name, palettes);
   }  
@@ -49,25 +49,25 @@ export class ThemeColorsService {
    * @param {HueValue} hue - Hue value
    * @param {SaturationValue} saturation - Saturation level (0 to 100)
    * @param {number} numberOfShades - Number of shades in each palette
-   * @param {ThemeColorMode} themeColorMode - Mode defining the number of hues
+   * @param {ThemeNumberOfColors} themeNumberOfColors - Mode defining the number of hues
    * @returns {RGBThemeColors} - RGB theme colors
    */
-  private generateRGBThemeColors(name: string, hue: HueValue, saturation: SaturationValue, numberOfShades: number, themeColorMode: ThemeColorMode): RGBThemeColors {
-    const hues = this.generateHues(hue, themeColorMode);
+  private generateRGBThemeColors(name: string, hue: HueValue, saturation: SaturationValue, numberOfShades: number, themeNumberOfColors: ThemeNumberOfColors): RGBThemeColors {
+    const hues = this.generateHues(hue, themeNumberOfColors);
     const palettes = hues.map(h => this.colorsPaletteService.generateRGBPalette(name, h, saturation, numberOfShades));
     return new RGBThemeColors(name, palettes);
   }
 
   /**
-   * Generate an array of HueValue based on the ThemeColorMode
+   * Generate an array of HueValue based on the ThemeNumberOfColors
    * @param {HueValue} baseHue - Base hue value
-   * @param {ThemeColorMode} themeColorMode - Mode defining the number of hues to generate
+   * @param {ThemeNumberOfColors} themeNumberOfColors - Mode defining the number of hues to generate
    * @returns {HueValue[]} - Array of HueValue
    */
-  private generateHues(baseHue: HueValue, themeColorMode: ThemeNumberOfColors): HueValue[] {
+  private generateHues(baseHue: HueValue, themeNumberOfColors: ThemeNumberOfColors): HueValue[] {
     const hues: HueValue[] = [baseHue];
     
-    switch (themeColorMode) {
+    switch (themeNumberOfColors) {
       case ThemeNumberOfColors.BI_COLOR:
         hues.push(new HueValue((baseHue.getValue() + 12) % 360));
         break;

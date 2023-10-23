@@ -6,7 +6,7 @@ import { ColorsPaletteService } from "./services/ColorsPaletteService";
 import { ColorsService } from "./services/ColorsService";
 import { ThemeDisplayService } from "./services/ThemeDisplayService";
 import { ColorMode } from "./models/types/ColorsMode";
-import { ThemeColorMode } from "./models/types/ThemeNumberOfColors";
+import { ThemeNumberOfColors } from "./models/types/ThemeNumberOfColors";
 
 document.addEventListener("DOMContentLoaded", function() {
   const hueInput = document.getElementById("hueInput") as HTMLInputElement;
@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function() {
       const saturation = new SaturationValue(Number(saturationInput.value));
       const themeName = themeNameInput.value;
       const numberOfShades = Number(numberOfShadesInput.value);
-      const themeColorMode = themeColorModeSelect.value as ThemeColorMode;
+      const themeColorMode = themeColorModeSelect.value as ThemeNumberOfColors;
       const colorMode = colorModeSelect.value as ColorMode;
 
       const themeSettings = new ThemeSettings(themeName, hue, saturation, numberOfShades, themeColorMode, colorMode);
