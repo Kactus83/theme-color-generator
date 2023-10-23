@@ -6,6 +6,7 @@ import { ColorsPaletteService } from "./ColorsPaletteService";
 import { ThemeSettings } from "../models/settings/ThemeSettings";
 import { ColorMode } from "../models/types/ColorsMode";
 import { ThemeNumberOfColors } from "../models/types/ThemeNumberOfColors";
+import { ThemeColorsMode } from "../models/types/ThemeColorsMode";
 
 /**
  * Service responsible for generating theme colors.
@@ -21,9 +22,9 @@ export class ThemeColorsService {
    */
   generateThemeColors(settings: ThemeSettings) {
     if (settings.colorMode === ColorMode.HEX) {
-      return this.generateHexThemeColors(settings.name, settings.hue, settings.saturation, settings.numberOfShades, settings.themeNumberOfColors);
+      return this.generateHexThemeColors(settings.name, settings.hue, settings.saturation, settings.numberOfShades, settings.themeNumberOfColors, settings.themeColorsMode);
     } else {
-      return this.generateRGBThemeColors(settings.name, settings.hue, settings.saturation, settings.numberOfShades, settings.themeNumberOfColors);
+      return this.generateRGBThemeColors(settings.name, settings.hue, settings.saturation, settings.numberOfShades, settings.themeNumberOfColors, settings.themeColorsMode);
     }
   }
   
@@ -37,8 +38,8 @@ export class ThemeColorsService {
    * @param {ThemeNumberOfColors} themeNumberOfColors - Mode defining the number of hues
    * @returns {RGBThemeColors} - RGB theme colors
    */
-  private generateHexThemeColors(name: string, hue: HueValue, saturation: SaturationValue, numberOfShades: number, themeNumberOfColors: ThemeNumberOfColors): HexThemeColors {
-    const hues = this.generateHues(hue, themeNumberOfColors);
+  private generateHexThemeColors(name: string, hue: HueValue, saturation: SaturationValue, numberOfShades: number, themeNumberOfColors: ThemeNumberOfColors, themeColorsMode: ThemeColorsMode): HexThemeColors {
+    const hues = this.generateHues(hue, themeNumberOfColors, themeColorsMode);
     const palettes = hues.map(h => this.colorsPaletteService.generateHexPalette(name, h, saturation, numberOfShades));
     return new HexThemeColors(name, palettes);
   }  
@@ -52,8 +53,8 @@ export class ThemeColorsService {
    * @param {ThemeNumberOfColors} themeNumberOfColors - Mode defining the number of hues
    * @returns {RGBThemeColors} - RGB theme colors
    */
-  private generateRGBThemeColors(name: string, hue: HueValue, saturation: SaturationValue, numberOfShades: number, themeNumberOfColors: ThemeNumberOfColors): RGBThemeColors {
-    const hues = this.generateHues(hue, themeNumberOfColors);
+  private generateRGBThemeColors(name: string, hue: HueValue, saturation: SaturationValue, numberOfShades: number, themeNumberOfColors: ThemeNumberOfColors, themeColorsMode: ThemeColorsMode): RGBThemeColors {
+    const hues = this.generateHues(hue, themeNumberOfColors, themeColorsMode);
     const palettes = hues.map(h => this.colorsPaletteService.generateRGBPalette(name, h, saturation, numberOfShades));
     return new RGBThemeColors(name, palettes);
   }
@@ -62,18 +63,27 @@ export class ThemeColorsService {
    * Generate an array of HueValue based on the ThemeNumberOfColors
    * @param {HueValue} baseHue - Base hue value
    * @param {ThemeNumberOfColors} themeNumberOfColors - Mode defining the number of hues to generate
+   * @param {ThemeColorsMode} themeColorsMode - Mode defining the colors to generate
    * @returns {HueValue[]} - Array of HueValue
    */
-  private generateHues(baseHue: HueValue, themeNumberOfColors: ThemeNumberOfColors): HueValue[] {
+  private generateHues(
+    baseHue: HueValue, 
+    themeNumberOfColors: ThemeNumberOfColors, 
+    themeColorsMode: ThemeColorsMode 
+  ): HueValue[] {
     const hues: HueValue[] = [baseHue];
     
     switch (themeNumberOfColors) {
       case ThemeNumberOfColors.BI_COLOR:
-        hues.push(new HueValue((baseHue.getValue() + 12) % 360));
-        break;
       case ThemeNumberOfColors.TRI_COLOR:
-        hues.push(new HueValue((baseHue.getValue() + 12) % 360));
-        hues.push(new HueValue((baseHue.getValue() - 12 + 360) % 360));
+        const hueDelta = themeColorsMode === ThemeColorsMode.COMPLEMENTARY ? 180 : 12;
+        
+        hues.push(new HueValue((baseHue.getValue() + hueDelta) % 360));
+        
+        if (themeNumberOfColors === ThemeNumberOfColors.TRI_COLOR) {
+          hues.push(new HueValue((baseHue.getValue() - hueDelta + 360) % 360));
+        }
+        
         break;
       default:
         break;
