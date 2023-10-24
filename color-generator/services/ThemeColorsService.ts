@@ -86,6 +86,7 @@ export class ThemeColorsService {
         
         break;
       default:
+        console.log('Unsupported number of colors');
         break;
     }
     
