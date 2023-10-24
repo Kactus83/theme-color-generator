@@ -69,27 +69,44 @@ export class ThemeColorsService {
   private generateHues(
     baseHue: HueValue, 
     themeNumberOfColors: ThemeNumberOfColors, 
-    themeColorsMode: ThemeColorsMode 
+    themeColorsMode: ThemeColorsMode
   ): HueValue[] {
     const hues: HueValue[] = [baseHue];
-    
+  
+    let hueDelta = themeColorsMode === ThemeColorsMode.COMPLEMENTARY ? 90 : 12;
+  
     switch (themeNumberOfColors) {
-      case ThemeNumberOfColors.BI_COLOR:
-      case ThemeNumberOfColors.TRI_COLOR:
-        const hueDelta = themeColorsMode === ThemeColorsMode.COMPLEMENTARY ? 120 : 12;
+      case ThemeNumberOfColors.BI_COLOR_UP:
+      case ThemeNumberOfColors.TRI_COLOR_UP:
+        hues.push(new HueValue((baseHue.getValue() + hueDelta) % 360));
         
-        hues.push(new HueValue((baseHue.getValue() + hueDelta + 360) % 360));
+        if (themeNumberOfColors === ThemeNumberOfColors.TRI_COLOR_UP) {
+          hues.push(new HueValue((baseHue.getValue() + 2 * hueDelta) % 360));
+        }
+        break;
         
-        if (themeNumberOfColors === ThemeNumberOfColors.TRI_COLOR) {
+      case ThemeNumberOfColors.BI_COLOR_DOWN:
+      case ThemeNumberOfColors.TRI_COLOR_DOWN:
+        hues.push(new HueValue((baseHue.getValue() - hueDelta + 360) % 360));
+        
+        if (themeNumberOfColors === ThemeNumberOfColors.TRI_COLOR_DOWN) {
+          hues.push(new HueValue((baseHue.getValue() - 2 * hueDelta + 360) % 360));
+        }
+        break;
+  
+      case ThemeNumberOfColors.BI_COLOR_CENTERED:
+      case ThemeNumberOfColors.TRI_COLOR_CENTERED:
+        hues.push(new HueValue((baseHue.getValue() + hueDelta) % 360));
+        
+        if (themeNumberOfColors === ThemeNumberOfColors.TRI_COLOR_CENTERED) {
           hues.push(new HueValue((baseHue.getValue() - hueDelta + 360) % 360));
         }
-        
         break;
+  
       default:
-        console.log('Unsupported number of colors');
         break;
     }
-    
+  
     return hues;
-  }  
+  }   
 }
