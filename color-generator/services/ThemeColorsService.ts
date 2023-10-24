@@ -76,7 +76,7 @@ export class ThemeColorsService {
     switch (themeNumberOfColors) {
       case ThemeNumberOfColors.BI_COLOR:
       case ThemeNumberOfColors.TRI_COLOR:
-        const hueDelta = themeColorsMode === ThemeColorsMode.COMPLEMENTARY ? 90 : 12;
+        const hueDelta = themeColorsMode === ThemeColorsMode.COMPLEMENTARY ? 120 : 12;
         
         hues.push(new HueValue((baseHue.getValue() + hueDelta + 360) % 360));
         
