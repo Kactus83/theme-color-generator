@@ -88,6 +88,7 @@ button:hover {
 
 .close {
     position: absolute;
+    color: whitesmoke;
     top: 16px;
     right: 16px;
     font-size: 32px;
