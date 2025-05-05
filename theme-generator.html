@@ -7,55 +7,133 @@
 </head>
 <body>
   <h1>Theme Color Generator</h1>
+  
+  <div class="dark-switch">
+    <label class="switch-label" for="darkModeSwitch">Dark Mode</label>
+    <label class="switch">
+      <input type="checkbox" id="darkModeSwitch">
+      <span class="slider"></span>
+    </label>
+  </div>
 
   <form id="themeForm">
     <fieldset>
       <legend><h2>Settings</h2></legend>
+
+      <!-- Theme Name -->
       <label for="themeNameInput">Theme Name:</label>
       <input type="text" id="themeNameInput" placeholder="Enter theme name">
 
-      <label for="hueInput">Hue Value (0-360):</label>
-      <input type="number" id="hueInput" min="0" max="360">
+      <!-- Hue & Saturation -->
+      <div class="form-row">
+        <div class="form-group half-width">
+          <label for="hueInput">Hue (0–360):</label>
+          <input type="number" id="hueInput" min="0" max="360" value="180">
+        </div>
+        <div class="form-group half-width">
+          <label for="saturationInput">Saturation (0–100):</label>
+          <input type="number" id="saturationInput" min="0" max="100" value="50">
+        </div>
+      </div>
 
-      <label for="saturationInput">Saturation Value (0-100):</label>
-      <input type="number" id="saturationInput" min="0" max="100">
-
+      <!-- Number of Shades -->
       <label for="numberOfShadesInput">Number of Shades:</label>
-      <input type="number" id="numberOfShadesInput" min="1">
+      <input type="number" id="numberOfShadesInput" min="1" value="5">
 
-      <label for="themeColorsModeSelect">Theme Colors Mode:</label>
-      <select id="themeColorsModeSelect">
+      <!-- Theme Color Mode + Switches -->
+      <label for="themeColorModeSelect">Theme Color Mode:</label>
+      <div class="mode-switch-row">
+        <select id="themeColorModeSelect" class="dropdown-50">
+          <option value="simple">Simple</option>
+          <option value="bi-colors-up">Bi-colors Up</option>
+          <option value="tri-colors-up">Tri-colors Up</option>
+          <option value="bi-colors-down">Bi-colors Down</option>
+          <option value="tri-colors-down">Tri-colors Down</option>
+          <option value="bi-colors-centered">Bi-colors Centered</option>
+          <option value="tri-colors-centered">Tri-colors Centered</option>
+        </select>
+
+        <!-- Default / Complementary -->
+        <div class="dropdown-25 switch-group">
+          <label class="switch-label">Mode:</label>
+          <label class="switch">
+            <input type="checkbox" id="themeColorsModeSwitch">
+            <span class="slider"></span>
+          </label>
+          <span id="themeColorsModeLabel">Default</span>
+        </div>
+
+        <!-- Hex / RGB -->
+        <div class="dropdown-25 switch-group">
+          <label class="switch-label">Format:</label>
+          <label class="switch">
+            <input type="checkbox" id="colorModeSwitch">
+            <span class="slider"></span>
+          </label>
+          <span id="colorModeLabel">Hex</span>
+        </div>
+      </div>
+
+      <!-- Hidden selects pour compatibilité JS -->
+      <select id="themeColorsModeSelect" style="display:none">
         <option value="default">Default</option>
         <option value="complementary">Complementary</option>
       </select>
-
-      <label for="numberOfColorsSelect">Color Mode:</label>
-      <select id="numberOfColorsSelect">
-        <option value="hex">Hex</option>
-        <option value="rgb">RGB</option>
+      <select id="numberOfColorsSelect" style="display:none">
+        <option value="hex">hex</option>
+        <option value="rgb">rgb</option>
       </select>
 
-      <label for="themeColorModeSelect">Theme Color Mode:</label>
-      <select id="themeColorModeSelect">
-        <option value="simple">Simple</option>
-        <option value="bi-colors-up">Bi-colors Up</option>
-        <option value="tri-colors-up">Tri-colors Up</option>
-        <option value="bi-colors-down">Bi-colors Down</option>
-        <option value="tri-colors-down">Tri-colors Down</option>
-        <option value="bi-colors-centered">Bi-colors Centered</option>
-        <option value="tri-colors-centered">Tri-colors Centered</option>
-      </select>
-
+      <!-- Buttons -->
       <div class="button-container">
         <button id="generateButton" type="button">Generate Theme</button>
         <button id="showCssButton" type="button" style="display:none;">Show CSS</button>
       </div>
-
     </fieldset>
   </form>
 
+  <!-- Bouton Show All Palettes (hors overlay) -->
+  <div class="button-container--show-all">
+    <button id="showAllPalettesButton" class="show-all-btn" type="button" style="display:none;">
+      📋 Show All Palettes
+    </button>
+  </div>
+
+  <!-- Palettes en ligne -->
   <div id="outputDiv"></div>
 
+  <!-- Overlay pour palette agrandie -->
+  <div id="themeOverlay" class="modal">
+    <div class="overlay-box overlay-theme">
+      <h3>Theme Preview</h3>
+      <span class="close" id="themeOverlayClose">&times;</span>
+      <!-- wrapper intermédiaire isolant les palettes -->
+      <div class="overlay-content-wrapper">
+        <div id="themeOverlayContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overlay pour CSS généré -->
+  <div id="cssOverlay" class="modal">
+    <div class="overlay-box overlay-css">
+      <h3>Generated CSS</h3>
+      <span class="close" id="cssOverlayClose">&times;</span>
+      <pre class="css-content" id="cssOverlayContent"></pre>
+    </div>
+  </div>
+
   <script src="dist/bundle.js"></script>
+  <script src="dist/main.js"></script>
+  <script>
+    const darkSwitch = document.getElementById('darkModeSwitch');
+    darkSwitch.addEventListener('change', () => {
+      if (darkSwitch.checked) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+      }
+    });
+  </script>
 </body>
 </html>

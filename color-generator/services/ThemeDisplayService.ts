@@ -4,112 +4,144 @@ import { Color } from "../models/value-objects/colors/Color";
 import { ThemeCSSGenerator } from "./ThemeCSSGenerator";
 
 /**
- * Service responsible for displaying theme colors and related CSS in a DOM element.
+ * Service responsible for displaying theme colors and related CSS in a DOM element and in an overlay.
  */
 export class ThemeDisplayService {
-  private cssGenerator: ThemeCSSGenerator;
+  private cssGenerator = new ThemeCSSGenerator();
   private cssButton: HTMLButtonElement;
-  private modal: HTMLDivElement;
+  private cssModal!: HTMLDivElement;
+  private themeOverlay: HTMLDivElement;
+  private overlayBox: HTMLDivElement;
+  private themeOverlayContent: HTMLDivElement;
+  private themeOverlayClose: HTMLSpanElement;
+  private showAllButton: HTMLButtonElement;
   private currentTheme: ThemeColors | null = null;
 
-  /**
-   * Initializes a new instance of the ThemeDisplayService.
-   * @param outputElement - The HTML element where the theme should be displayed.
-   */
   constructor(private outputElement: HTMLElement) {
-    this.cssGenerator = new ThemeCSSGenerator();
     this.cssButton = document.getElementById('showCssButton') as HTMLButtonElement;
-    this.modal = document.createElement('div');
+    // Overlay elements
+    this.themeOverlay = document.getElementById('themeOverlay') as HTMLDivElement;
+    this.overlayBox = this.themeOverlay.querySelector('.overlay-theme') as HTMLDivElement;
+    this.themeOverlayContent = document.getElementById('themeOverlayContent') as HTMLDivElement;
+    this.themeOverlayClose = document.getElementById('themeOverlayClose') as HTMLSpanElement;
+    // Show All button
+    this.showAllButton = document.getElementById('showAllPalettesButton') as HTMLButtonElement;
 
-    if (this.cssButton === null) {
-      console.error("Could not find the 'showCssButton' element.");
+    if (!this.cssButton || !this.themeOverlay || !this.overlayBox
+      || !this.themeOverlayContent || !this.themeOverlayClose
+      || !this.showAllButton) {
+      console.error("Required elements are missing in the DOM.");
       return;
     }
 
     this.initializeCSSButton();
+    this.initializeThemeOverlay();
   }
 
-  /**
-   * Displays the given theme in the associated HTML element.
-   * @param theme - The theme to display.
-   */
   display(theme: ThemeColors): void {
     this.currentTheme = theme;
-
-    if (!this.outputElement || !this.cssButton) return;
-
+    this.showAllButton.style.display = 'inline-block';
     this.outputElement.innerHTML = '';
-    theme.palettes.forEach((palette: ColorsPalette) => this.displayPalette(palette));
+
+    theme.palettes.forEach((palette, idx) => {
+      const paletteDiv = this.createPaletteElement(palette);
+      paletteDiv.addEventListener('click', () => this.showSinglePaletteOverlay(idx));
+      this.outputElement.appendChild(paletteDiv);
+    });
 
     this.cssButton.style.display = 'block';
+    this.showAllButton.onclick = () => this.showAllPalettesOverlay();
   }
 
-  /**
-   * Displays a palette as a child of the outputElement.
-   * @param palette - The palette to display.
-   */
-  private displayPalette(palette: ColorsPalette): void {
-    const paletteDiv = document.createElement('div');
-    paletteDiv.classList.add('palette');
-    palette.shades.forEach((shade: Color) => this.displayShade(shade, paletteDiv));
-    this.outputElement.appendChild(paletteDiv);
+  private createPaletteElement(palette: ColorsPalette): HTMLDivElement {
+    const div = document.createElement('div');
+    div.classList.add('palette');
+    palette.shades.forEach(shade => {
+      const box = document.createElement('div');
+      box.classList.add('color-box');
+      box.style.backgroundColor = shade.toString();
+      div.appendChild(box);
+    });
+    return div;
   }
 
-  /**
-   * Displays a shade as a child of the given HTML element.
-   * @param shade - The color shade to display.
-   * @param parentElement - The parent HTML element.
-   */
-  private displayShade(shade: Color, parentElement: HTMLElement): void {
-    const colorDiv = document.createElement('div');
-    colorDiv.style.backgroundColor = shade.toString();
-    colorDiv.classList.add('color-box');
-    parentElement.appendChild(colorDiv);
+  private initializeCSSButton() {
+    this.cssButton.addEventListener('click', () => this.showCssModal());
   }
 
-  /**
-   * Initializes the button for showing CSS modal.
-   */
-  private initializeCSSButton(): void {
-    if (this.cssButton === null) return;
+  private initializeThemeOverlay() {
+    // Taille fixe + scroll
+    this.overlayBox.style.width = '60vw';
+    this.overlayBox.style.height = '60vh';
+    this.overlayBox.style.overflowY = 'auto';
 
-    this.cssButton.addEventListener('click', () => {
-      this.showCssModal();
+    this.themeOverlayClose.addEventListener('click', () => this.closeThemeOverlay());
+    this.themeOverlay.addEventListener('click', e => {
+      if (e.target === this.themeOverlay) this.closeThemeOverlay();
     });
   }
 
-  /**
-   * Displays a modal containing the CSS for the current theme.
-   */
-  private showCssModal(): void {
-    if (!this.currentTheme) {
-      console.error("No theme is currently set.");
-      return;
-    }
-
-    const cssString = this.cssGenerator.generate(this.currentTheme);
-    this.modal = document.createElement("div");
-    const closeBtn = document.createElement("span");
-    const cssContent = document.createElement("pre");
-
-    this.modal.classList.add("modal");
-    closeBtn.classList.add("close");
-    cssContent.classList.add("css-content");
-
-    closeBtn.innerHTML = "&times;";
-    cssContent.textContent = cssString;
-
-    this.modal.appendChild(closeBtn);
-    this.modal.appendChild(cssContent);
-    document.body.appendChild(this.modal);
-
-    closeBtn.onclick = () => this.closeCssModal();
+  private showCssModal() {
+    if (!this.currentTheme) return;
+    const cssStr = this.cssGenerator.generate(this.currentTheme);
+    this.cssModal = document.createElement('div');
+    const btn = document.createElement('span');
+    const pre = document.createElement('pre');
+    this.cssModal.classList.add('modal');
+    btn.classList.add('close');
+    pre.classList.add('css-content');
+    btn.innerHTML = '&times;';
+    pre.textContent = cssStr;
+    this.cssModal.append(btn, pre);
+    document.body.append(this.cssModal);
+    btn.onclick = () => document.body.removeChild(this.cssModal);
   }
 
-  /**
-   * Closes the CSS modal.
-   */
-  private closeCssModal(): void {
-    document.body.removeChild(this.modal);
+  private showSinglePaletteOverlay(idx: number) {
+    if (!this.currentTheme) return;
+    this.themeOverlayContent.innerHTML = '';
+    const p = this.currentTheme.palettes[idx];
+    const wrapper = this.createWrapper();
+    const title = document.createElement('h4');
+    title.innerText = `Palette ${idx + 1}`;
+    wrapper.append(title, this.createPaletteElement(p));
+    this.themeOverlayContent.append(wrapper);
+    this.themeOverlay.style.display = 'flex';
+  }
+
+  private showAllPalettesOverlay() {
+    if (!this.currentTheme) return;
+    this.themeOverlayContent.innerHTML = '';
+    const wrapper = this.createWrapper();
+
+    this.currentTheme.palettes.forEach((p, i) => {
+      const section = document.createElement('div');
+      section.style.marginBottom = '1rem';
+      const title = document.createElement('h4');
+      title.innerText = `Palette ${i + 1}`;
+      section.append(title, this.createPaletteElement(p));
+      wrapper.appendChild(section);
+    });
+
+    this.themeOverlayContent.append(wrapper);
+    this.themeOverlay.style.display = 'flex';
+  }
+
+  private createWrapper(): HTMLDivElement {
+    const w = document.createElement('div');
+    const bg = getComputedStyle(document.documentElement).getPropertyValue('--field-bg');
+    Object.assign(w.style, {
+      backgroundColor: bg.trim(),
+      padding: '1rem',
+      borderRadius: '0.3rem',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '1rem'
+    });
+    return w;
+  }
+
+  private closeThemeOverlay() {
+    this.themeOverlay.style.display = 'none';
   }
 }
